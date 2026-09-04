@@ -1,26 +1,221 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-ink: #000000;
+  --color-surface: #0a0a0d;
+  --color-surface-2: #121218;
+  --color-line: #26262f;
+  --color-line-bright: #3a3a46;
+  --color-mute: #9a9aa8;
+  --color-accent: #8b5cf6;
+  --color-accent-soft: #a78bfa;
+  --color-accent-deep: #6d28d9;
+
+  --shadow-brut: 5px 5px 0 0 var(--color-accent);
+  --shadow-brut-sm: 3px 3px 0 0 var(--color-accent);
+  --shadow-brut-lg: 8px 8px 0 0 var(--color-accent);
+  --shadow-brut-white: 5px 5px 0 0 #ffffff;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Keep anchored sections clear of the sticky header. */
+section[id] {
+  scroll-margin-top: 5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-ink);
+  color: #ffffff;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+/* Keyboard focus stays clearly visible against the black ground. */
+:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  /* Hard-edged panel: the base neo-brutalist surface used across the page. */
+  .brut-card {
+    border: 2px solid var(--color-line-bright);
+    background-color: var(--color-surface);
+  }
+
+  .brut-shadow {
+    box-shadow: var(--shadow-brut);
+  }
+
+  /* Small uppercase mono label used above section headings. */
+  .eyebrow {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent-soft);
+  }
+
+  /* Faint graph-paper grid, used behind the hero only. */
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+   Every animation below is disabled by the prefers-reduced-motion block above,
+   which zeroes animation and transition durations globally.
+--------------------------------------------------------------------------- */
+
+@keyframes sfx-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sfx-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes sfx-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(3deg);
+  }
+}
+
+@keyframes sfx-breathe {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes sfx-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 64px 64px;
+  }
+}
+
+@keyframes sfx-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@layer components {
+  /* Scroll-triggered entrance. The class is toggled by <Reveal />. */
+  .reveal {
+    opacity: 0;
+  }
+
+  .reveal.is-visible {
+    animation: sfx-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Hero entrance runs immediately rather than waiting on the observer. */
+  .enter {
+    animation: sfx-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  .marquee-track {
+    animation: sfx-marquee 38s linear infinite;
+  }
+
+  .float-slow {
+    animation: sfx-float 11s ease-in-out infinite;
+  }
+
+  .breathe {
+    animation: sfx-breathe 9s ease-in-out infinite;
+  }
+
+  .grid-bg-drift {
+    animation: sfx-grid-drift 24s linear infinite;
+  }
+
+  .bar-grow {
+    transform-origin: left;
+    animation: sfx-bar-grow 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Large ghost numerals used as section watermarks. */
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--color-line-bright);
+  }
+
+  /* Lift-on-hover used by cards and rows. */
+  .lift {
+    transition:
+      transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.22s ease;
+  }
+
+  .lift:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-brut);
+  }
 }
