@@ -6,7 +6,7 @@ export function PointsExplainer() {
     <section id="points" className="border-b-2 border-line">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
         <Reveal>
-        <p className="eyebrow">03 — Understanding your points</p>
+        <p className="eyebrow">03 · Understanding your points</p>
         <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
           Every point on this page is reproducible.
         </h2>
@@ -39,7 +39,7 @@ export function PointsExplainer() {
               </p>
               <p>
                 Pending points record outreach the moment it happens. They convert
-                into approved points once completions are verified — and it is the
+                into approved points once completions are verified, and it is the
                 approved figure that decides your rank.
               </p>
             </div>

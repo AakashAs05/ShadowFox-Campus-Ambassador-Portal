@@ -1,11 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
 
 /** In-page anchors for this portal. */
 const PROGRAMME_LINKS = [
-  { href: "#pathways", label: "Two pathways" },
-  { href: "#points", label: "How points work" },
-  { href: "#integrity", label: "Integrity" },
-  { href: "#leaderboard", label: "Leaderboard" },
+  { href: "/#pathways", label: "Two pathways" },
+  { href: "/#points", label: "How points work" },
+  { href: "/#integrity", label: "Integrity" },
+  { href: "/#leaderboard", label: "Leaderboard" },
+  { href: "/#rewards", label: "Rewards" },
+  { href: "/terms", label: "Terms & Conditions" },
 ];
 
 const LINKEDIN_URL = "https://www.linkedin.com/company/shadowfoxinfo/";
@@ -23,21 +26,6 @@ function MailIcon() {
     >
       <rect x="2.5" y="4.5" width="19" height="15" rx="1.5" />
       <path d="m3 6 9 7 9-7" />
-    </svg>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className="mt-0.5 h-4 w-4 shrink-0 text-accent-soft"
-      aria-hidden="true"
-    >
-      <path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4 6.2 2 2 0 0 1 6 3Z" />
     </svg>
   );
 }
@@ -125,12 +113,12 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-3">
               {PROGRAMME_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     className="text-sm text-mute transition-colors hover:text-white"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -150,15 +138,6 @@ export function SiteFooter() {
                 </a>
               </li>
               <li className="flex gap-2.5">
-                <PhoneIcon />
-                <a
-                  href="tel:+918095776765"
-                  className="transition-colors hover:text-white"
-                >
-                  +91-8095776765
-                </a>
-              </li>
-              <li className="flex gap-2.5">
                 <PinIcon />
                 <span>Chennai, India</span>
               </li>
@@ -175,7 +154,8 @@ export function SiteFooter() {
           </div>
           <p className="max-w-md text-xs leading-relaxed text-mute">
             Leaderboard figures are maintained by the ShadowFox programme team and
-            refresh automatically. Points shown reflect approved activity only.
+            republished every month by the 10th. Points shown reflect approved
+            activity only.
           </p>
         </div>
       </div>

@@ -39,7 +39,7 @@ export function Integrity() {
     <section id="integrity" className="border-b-2 border-line bg-surface">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
         <Reveal>
-        <p className="eyebrow">04 — Why quality matters</p>
+        <p className="eyebrow">04 · Why quality matters</p>
         <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
           A quality-first approach protects everyone.
         </h2>
@@ -62,7 +62,7 @@ export function Integrity() {
 
         <div className="mt-20">
           <Reveal>
-          <p className="eyebrow">05 — Fair use policy</p>
+          <p className="eyebrow">05 · Fair use policy</p>
           <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
             Rewards go to those who drive genuine impact.
           </h2>

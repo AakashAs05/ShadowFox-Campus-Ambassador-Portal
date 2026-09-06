@@ -13,7 +13,7 @@ export function ReferralFlow() {
     <section className="border-b-2 border-line bg-surface">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
         <Reveal>
-        <p className="eyebrow">02 - Referral flow</p>
+        <p className="eyebrow">02 · Referral flow</p>
         <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
           From outreach to reward, every step is tracked.
         </h2>

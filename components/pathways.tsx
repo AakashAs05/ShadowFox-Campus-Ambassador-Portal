@@ -23,7 +23,7 @@ export function Pathways() {
     <section id="pathways" className="border-b-2 border-line">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
         <Reveal>
-          <p className="eyebrow">01 — Two pathways</p>
+          <p className="eyebrow">01 · Two pathways</p>
           <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
             Built for student leaders and the communities they run.
           </h2>

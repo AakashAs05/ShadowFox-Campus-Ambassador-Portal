@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CACHE_KEY } from "@/lib/config";
+import { CACHE_KEY, LEADERBOARD_UPDATED } from "@/lib/config";
 import { loadLeaderboard } from "@/lib/leaderboard";
 import type { LeaderboardData, Segment } from "@/lib/types";
 import {
@@ -29,13 +29,13 @@ const SEGMENTS: Array<{ id: Segment; code: string; label: string; tip: string }>
     id: "ambassador",
     code: "SFCAMP",
     label: "Campus Ambassadors",
-    tip: "SFCAMP refers to Campus Ambassadors — individual student leaders representing ShadowFox on their campus.",
+    tip: "SFCAMP refers to Campus Ambassadors: individual student leaders representing ShadowFox on their campus.",
   },
   {
     id: "club",
     code: "SFCLUB",
     label: "Clubs",
-    tip: "SFCLUB refers to Clubs — college clubs, societies and student communities using the referral program.",
+    tip: "SFCLUB refers to Clubs: college clubs, societies and student communities using the referral program.",
   },
 ];
 
@@ -44,19 +44,6 @@ const TIERS = [
   { label: "Second Place", ordinal: "02" },
   { label: "Third Place", ordinal: "03" },
 ];
-
-function formatTimestamp(raw: string | null): string | null {
-  if (!raw) return null;
-  const parsed = new Date(raw.replace(" ", "T"));
-  if (Number.isNaN(parsed.getTime())) return raw;
-  return parsed.toLocaleString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export function Leaderboard() {
   const [data, setData] = useState<LeaderboardData | null>(null);
@@ -145,7 +132,6 @@ export function Leaderboard() {
   );
 
   const activeSegment = SEGMENTS.find((item) => item.id === segment)!;
-  const lastUpdated = formatTimestamp(data?.lastUpdated ?? null);
 
   return (
     <section id="leaderboard" className="relative border-b-2 border-line bg-surface">
@@ -232,7 +218,14 @@ export function Leaderboard() {
               </label>
 
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-mute">
-                {lastUpdated ? <span>Updated {lastUpdated}</span> : null}
+                <span className="flex items-center gap-1.5">
+                  Points list updated {LEADERBOARD_UPDATED}
+                  <InfoTip label="How often is the points list updated?">
+                    The points list is reviewed and republished every month by
+                    the 10th. Activity recorded after a month&rsquo;s cut-off
+                    appears in the following update.
+                  </InfoTip>
+                </span>
                 {data?.source === "fallback" ? (
                   <span className="border border-line-bright px-2 py-0.5 text-[0.625rem] uppercase tracking-wider">
                     Offline snapshot
@@ -711,8 +704,8 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
     <div className="brut-card mt-10 p-8 text-center sm:p-12">
       <h3 className="text-xl font-black">Leaderboard unavailable</h3>
       <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-mute">
-        We could not reach the standings just now. This usually clears on its own —
-        try again in a moment.
+        We could not reach the standings just now. This usually clears on its own,
+        so try again in a moment.
       </p>
       <button
         type="button"

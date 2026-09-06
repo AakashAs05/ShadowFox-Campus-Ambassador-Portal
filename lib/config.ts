@@ -26,3 +26,28 @@ export const CACHE_TTL_MS = 5 * 60 * 1000;
  * (header, hero, closing CTA) always points at the same form.
  */
 export const APPLY_FORM_URL = "https://forms.gle/cNR67XDdWhLrS4T57";
+
+/**
+ * The date the points list was last reviewed and republished.
+ *
+ * This is deliberately manual rather than derived from the sheet: the sheet's
+ * own timestamps move whenever a cell is touched, whereas participants need
+ * one authoritative "this month's figures are final" date. The programme team
+ * edits this line each month once the list is finalised (by the 10th), and it
+ * is the date shown at the top right of the leaderboard.
+ */
+export const LEADERBOARD_UPDATED = "7th September 2026";
+
+/** Address participants write to for redemptions and queries. */
+export const SUPPORT_EMAIL = "support@shadowfox.in";
+
+/** Total points a participant must hold before they can request a redemption. */
+export const REDEEM_THRESHOLD = 2000;
+
+/**
+ * The date the terms and conditions were last changed. Edit this line whenever
+ * the wording on /terms is amended; it is the date shown beside that page's
+ * title. It is deliberately separate from LEADERBOARD_UPDATED, because the
+ * points list and the terms change on their own schedules.
+ */
+export const TERMS_UPDATED = "5th September 2026";

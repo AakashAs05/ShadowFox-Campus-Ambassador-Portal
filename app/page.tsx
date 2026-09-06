@@ -6,6 +6,7 @@ import { Marquee } from "@/components/marquee";
 import { Pathways } from "@/components/pathways";
 import { PointsExplainer } from "@/components/points-explainer";
 import { ReferralFlow } from "@/components/referral-flow";
+import { Rewards } from "@/components/rewards";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -23,6 +24,7 @@ export default function Home() {
         <PointsExplainer />
         <Integrity />
         <Leaderboard />
+        <Rewards />
         <ClosingCta />
       </main>
       <SiteFooter />

@@ -12,7 +12,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://shadow-fox-campus-ambassador-portal.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "ShadowFox Referral Program | Campus Ambassador Portal",
   description:
     "Track referrals, points and rankings for the ShadowFox Campus Ambassador and Club Referral programmes. Transparent. Fair. Impact-driven.",
