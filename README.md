@@ -1,30 +1,113 @@
 # ShadowFox Campus Ambassador Portal
 
-A public, static portal for the ShadowFox Referral Program. Visitors read how the
-programme works, then pick a leaderboard - **SFCAMP** (Campus Ambassadors) or
-**SFCLUB** (Clubs) - and see live standings with every scoring column exposed.
+A public portal for the ShadowFox Referral Program. It explains how the programme
+works, publishes live standings for both referral tracks, and documents how
+points convert into rewards.
 
-There is no backend, no database and no admin login. The leaderboard reads a
-published Google Sheet directly from the visitor's browser.
+Visitors choose a leaderboard, **SFCAMP** (Campus Ambassadors) or **SFCLUB**
+(Clubs), and see every scoring column that produces a rank, so any figure on
+screen can be checked against the published rules.
 
----
+## Overview
 
-### Which leaderboard a row lands on
+| | |
+|---|---|
+| **Framework** | Next.js 16 (App Router) with React 19 |
+| **Styling** | Tailwind CSS v4 |
+| **Language** | TypeScript |
+| **Data source** | A published Google Sheet, read as CSV in the browser |
+| **Backend** | None. No database, no server state, no admin login |
 
-A `referral_id` starting with `SFCLUB` goes to the **Clubs** board. Everything
-else goes to **Campus Ambassadors**. To move an entry between boards, change its
-referral ID in the sheet, nothing else is needed.
+Leaderboard maintenance is a spreadsheet task rather than a deployment task. The
+programme team edits the sheet and the site reflects it on the next load.
 
----
+## Project structure
+
+```
+app/
+  page.tsx            Landing page composition
+  terms/page.tsx      Terms and conditions
+  layout.tsx          Root layout, metadata, fonts
+components/           Section components (hero, leaderboard, rewards, ...)
+lib/
+  config.ts           Sheet URL, support address, published dates
+  leaderboard.ts      Fetch, parse, cache and rank the sheet data
+  scoring.ts          Points arithmetic from the programme brochure
+  rewards.ts          Swag catalogue and point costs
+  view.ts             Table columns, sorting and search
+public/
+  data/               Bundled fallback snapshot
+  Merch-CA/           Reward product images
+```
+
+## Data model
+
+Each row in the sheet is one participant. The `referral_id` prefix decides which
+board the row appears on: an ID beginning with `SFCLUB` goes to the Clubs board
+and everything else goes to Campus Ambassadors. Moving an entry between boards
+means changing its referral ID in the sheet, with no code change required.
+
+Expected columns:
+
+```
+referral_id, name_or_club, college, VI_registrations_T, VI_completions,
+VI_pending_points, VI_approved_points, Redeemed_Points, Total_Points_Final,
+rank, last_updated
+```
+
+## Scoring
+
+Implemented in [`lib/scoring.ts`](lib/scoring.ts), transcribed from the programme
+brochure:
+
+```
+Pending Points  = Total Registrations x 5
+Quality Factor  = 1.0 if completion ratio >= 20%, otherwise 0.5
+Approved Points = (Pending Points x Quality Factor) + (Completions x 25)
+Total Points    = Approved Points - Redeemed Points
+```
+
+The table displays the sheet's own stored figures rather than recomputing them,
+because those columns can carry manual adjustments such as fair use deductions or
+redemptions. The `Ratio` and `Quality` columns are derived on the fly so each
+row's arithmetic stays checkable on screen.
+
+Ranking uses standard competition ranking (`1, 2, 2, 4`) on `Total_Points_Final`,
+calculated within each board so the Clubs table never inherits gaps left by
+Campus Ambassador rows.
+
+The board paginates at 25 rows. Search covers the entire board rather than the
+current page.
+
+## Rewards
+
+The redemption rules and swag catalogue live in [`lib/rewards.ts`](lib/rewards.ts)
+and are rendered by the rewards section and the terms page from that single
+source, so point costs cannot drift between the two.
+
+Participants become eligible to redeem at 2,000 total points, then request items
+by email. Amazon gift card values are set case by case rather than at a fixed
+rate.
 
 ## Configuration
 
-The sheet URL is read from `NEXT_PUBLIC_SHEET_CSV_URL`, falling back to the value
-in [`lib/config.ts`](lib/config.ts). To change the sheet without touching code,
-set that variable in **Vercel → Project → Settings → Environment Variables** and
-redeploy. See [`.env.example`](.env.example).
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_SHEET_CSV_URL` | Published CSV URL of the leaderboard sheet |
 
----
+The variable is optional. When unset, the site falls back to the URL defined in
+[`lib/config.ts`](lib/config.ts). The URL must be the CSV export of a published
+sheet (`.../pub?output=csv`), not the `pubhtml` page.
+
+Two dates in [`lib/config.ts`](lib/config.ts) are maintained by hand:
+
+- `LEADERBOARD_UPDATED` is shown at the top right of the leaderboard and is
+  updated each month once the points list is finalised.
+- `TERMS_UPDATED` is shown beside the terms and conditions heading and is updated
+  whenever those terms change.
+
+Both are deliberately manual so that a published date always reflects a reviewed
+list rather than an incidental edit to the sheet.
 
 ## Local development
 
@@ -35,54 +118,13 @@ npm run build    # production build
 npm run lint
 ```
 
----
+## Data resilience
 
-## Deploying
+The leaderboard resolves its data in order: a fresh browser cache, the live
+sheet, a stale browser cache, then the snapshot committed at
+`public/data/fallback-leaderboard.csv`.
 
-### Vercel (free tier)
-
-1. Push this repository to GitHub.
-2. In Vercel, **Add New → Project**, import the repo, and deploy. The Next.js
-   preset needs no configuration.
-3. Optionally set `NEXT_PUBLIC_SHEET_CSV_URL` under Environment Variables.
-
-Every push to `main` redeploys automatically. Note that routine leaderboard
-updates need none of this — those are just sheet edits.
-
-## How the numbers work
-
-Transcribed from the programme brochure and implemented in
-[`lib/scoring.ts`](lib/scoring.ts):
-
-```
-Pending Points  = Total Registrations × 5
-Quality Factor  = 1.0 if completion ratio ≥ 20%, else 0.5
-Approved Points = (Pending Points × Quality Factor) + (Completions × 25)
-```
-
-The sheet's own figures are what the table displays, they can carry manual
-adjustments such as fair-use deductions or redemptions, and overwriting them with
-recomputed values would silently erase those. The `Ratio` and `Quality` columns
-are derived on the fly so every row's arithmetic is checkable on screen.
-
-Ranking uses standard competition ranking (`1, 2, 2, 4`) on `Total_Points_Final`,
-computed **within each board** so the club table never inherits gaps left by
-ambassador rows.
-
-The sheet also carries its own `rank` column, which the site ignores. As of the
-current sheet that column is ordered by `VI_registrations_T` rather than by
-`Total_Points_Final`, which would place a 93-point entry above a 1,075-point one
-and contradicts the brochure rule that only approved points decide ranking. The
-site therefore derives rank from `Total_Points_Final` itself. Worth correcting
-the sheet formula so both agree.
-
-The board shows 25 rows per page with numbered pagination; searching looks across
-the whole board, not just the current page.
-
-## Resilience
-
-The leaderboard tries, in order: a fresh browser cache, the live sheet, a stale
-browser cache, then the snapshot committed at
-`public/data/fallback-leaderboard.csv`. If the sheet is ever unpublished or its
-URL rotated, the page still renders and shows an "Offline snapshot" badge rather
-than breaking.
+If the sheet is unpublished or its URL is rotated, the page still renders from
+the bundled snapshot and displays an "Offline snapshot" badge rather than
+failing. Cached copies are held for five minutes before a refetch, and a manual
+Refresh control is available beside the leaderboard.
