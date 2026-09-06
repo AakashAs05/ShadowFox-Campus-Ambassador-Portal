@@ -15,8 +15,6 @@ screen can be checked against the published rules.
 | **Framework** | Next.js 16 (App Router) with React 19 |
 | **Styling** | Tailwind CSS v4 |
 | **Language** | TypeScript |
-| **Data source** | A published Google Sheet, read as CSV in the browser |
-| **Backend** | None. No database, no server state, no admin login |
 
 Leaderboard maintenance is a spreadsheet task rather than a deployment task. The
 programme team edits the sheet and the site reflects it on the next load.
@@ -57,8 +55,7 @@ rank, last_updated
 
 ## Scoring
 
-Implemented in [`lib/scoring.ts`](lib/scoring.ts), transcribed from the programme
-brochure:
+Implemented in [`lib/scoring.ts`](lib/scoring.ts):
 
 ```
 Pending Points  = Total Registrations x 5
@@ -83,7 +80,7 @@ current page.
 
 The redemption rules and swag catalogue live in [`lib/rewards.ts`](lib/rewards.ts)
 and are rendered by the rewards section and the terms page from that single
-source, so point costs cannot drift between the two.
+source.
 
 Participants become eligible to redeem at 2,000 total points, then request items
 by email. Amazon gift card values are set case by case rather than at a fixed
@@ -105,9 +102,6 @@ Two dates in [`lib/config.ts`](lib/config.ts) are maintained by hand:
   updated each month once the points list is finalised.
 - `TERMS_UPDATED` is shown beside the terms and conditions heading and is updated
   whenever those terms change.
-
-Both are deliberately manual so that a published date always reflects a reviewed
-list rather than an incidental edit to the sheet.
 
 ## Local development
 
